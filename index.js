@@ -51,12 +51,14 @@ module.exports = {
         }
       }
       curText = curText
+        // Double quotes are easy
         .replace(/"(.*?)"/g,'&ldquo;$1&rdquo;')
-        .replace(/^'(.*?)'/g,'&lsquo;$1&rsquo;')
-        .replace(/^(\S*?)'/g,'$1&rsquo;')
-        .replace(/(\s)'(\S*?)'/g,'$1&lsquo;$2&rsquo;')
-        .replace(/(\W)'(\w*?)'(\W)/g,'$1&lsquo;$2&rsquo;$3')
-        .replace(/(\S)'(\S|\s)/g,'$1&rsquo;$2');
+        // Replace `we're` with `we&rsquo;re`
+        .replace(/(\w)'(\w)/g,'$1&rsquo;$2')
+        // Replace `'who is that?'` with `&lsquo;who is that&rsquo;`
+        .replace(/'(\w)([^']+)(\w)'/g,'&lsquo;$1$2$3&rsquo;')
+        // Replace `'sup, yo` with `&rsquo;sup, yo`
+        .replace(/(\s|^)'([^']+)([^A-Za-z'])/g,'$1&rsquo;$2$3');
 
       for (var i = 0; i < codeBlocks.length; i++) {
         curText = curText.replace("[[["+i+"]]]", codeBlocks[i]);
