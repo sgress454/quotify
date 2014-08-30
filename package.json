@@ -1,0 +1,22 @@
+{
+  "name": "quotify",
+  "version": "0.0.0",
+  "description": "Have a text file filled with straight quotes that should be curly?  Run your text through Quotify to automatically prettify those quotes with their correct HTML entity equivalents!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sgress454/quotify"
+  },
+  "author": "Scott M. Gress",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sgress454/quotify/issues"
+  },
+  "homepage": "https://github.com/sgress454/quotify",
+  "devDependencies": {
+    "node-machine": "^0.1.4"
+  }
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Quotify</title>
+	<meta name="description" content="Have a text file filled with straight quotes that should be curly?  Run your text through Quotify to automatically prettify those quotes with their correct HTML entity equivalents!">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<style type="text/css">
+		html, body {
+			height: 90%;
+		}
+		body {
+			background: #eee;
+			font-family: Helvetica;
+			font-size: 1em;
+		}
+		textarea {
+			display: block;
+		}
+		textarea[name=content] {
+			width: 90%;
+			height: 45%;
+			margin-bottom: 20px;
+		}
+		textarea[name=result] {
+			width: 90%;
+			height: 45%;
+		}
+		form {
+			height: 90%;
+		}
+		form div.formContent {
+			height: 100%;
+		}
+		.footnote {
+			clear: both;
+			margin-top: 20px;
+			margin-bottom: 10px;
+			text-align: center;
+			font-size: 10px;
+		}
+		
+	</style>
+	<script type="text/javascript">
+		(function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
+		$(function() {
+			
+			/*
+			 * jQuery throttle / debounce - v1.1 - 3/7/2010
+			 * http://benalman.com/projects/jquery-throttle-debounce-plugin/
+			 * 
+			 * Copyright (c) 2010 "Cowboy" Ben Alman
+			 * Dual licensed under the MIT and GPL licenses.
+			 * http://benalman.com/about/license/
+			 */
+
+			$('#content').keyup($.throttle(250, updatePreview));
+			$('#content').bind('paste', $.throttle(250, updatePreview));
+			$('input').click(updatePreview);
+
+			function updatePreview() {
+				$('#content').attr('placeholder','');
+				var curText = $('#content').val();
+				// Strip out code blocks if requested
+				var codeBlocks = [];
+				if ($('input[name=skipCode]').prop('checked')) {
+					while(/```([\S\s]*?)```/m.test(curText)) {
+						var matches = curText.match(/```([\S\s]*?)```/);
+						curText = curText.replace(/```([\S\s]*?)```/, "[[["+codeBlocks.length+"]]]");
+						codeBlocks.push("```"+matches[1]+"```");
+					}
+					while(/`.*`/.test(curText)) {
+						var matches = curText.match(/`(.*?)`/);
+						curText = curText.replace(/`(.*?)`/, "[[["+codeBlocks.length+"]]]");
+						codeBlocks.push("`"+matches[1]+"`");
+					}
+				}
+				if ($('input[name=skipTag]').prop('checked')) {
+					while(/<([\S\s]*?)>/.test(curText)) {
+						var matches = curText.match(/<([\S\s]*?)>/);
+						curText = curText.replace(/<([\S\s]*?)>/, "[[["+codeBlocks.length+"]]]");
+						codeBlocks.push("<"+matches[1]+">");
+					}
+				}
+				curText = curText
+					.replace(/"(.*?)"/g,'&ldquo;$1&rdquo;')
+					.replace(/^'(.*?)'/g,'&lsquo;$1&rsquo;')
+					.replace(/^(\S*?)'/g,'$1&rsquo;')
+					.replace(/(\s)'(\S*?)'/g,'$1&lsquo;$2&rsquo;')
+					.replace(/(\W)'(\w*?)'(\W)/g,'$1&lsquo;$2&rsquo;$3')
+					.replace(/(\S)'(\S|\s)/g,'$1&rsquo;$2')
+
+				for (var i = 0; i < codeBlocks.length; i++) {
+					curText = curText.replace("[[["+i+"]]]", codeBlocks[i]);
+				}
+
+				$('#result').val(curText);
+			}
+		});
+
+	</script>
+</head>
+<body>
+	<h1>Quotify!</h1>
+	<div>Enter your text below.  Straight quotes will be intelligently converted to their HTML entity curly-equivalents.</div>
+	<form method="post" id="theForm" onSubmit="return false;">
+		<div class="formContent">
+			<textarea name="content" id="content" placeholder="&quot;What's the deal?&quot;, said the Big Bopper.  &quot;We're flying kinda low.&quot;"></textarea>
+			<div><input type="checkbox" name="skipCode" checked="checked" /> <label for="skipCode">Skip code blocks delimited by ` or ```</label></div>
+			<div><input type="checkbox" name="skipTag" checked="checked" /> <label for="skipTag">Skip quotes enclosed in HTML tags</label></div>
+			<h2>Result: </h2>
+			<textarea name="result" id="result" readonly="readonly">&amp;ldquo;What&amp;rsquo;s the deal?&amp;rdquo;, said the Big Bopper.  &amp;ldquo;We&amp;rsquo;re flying kinda low.&amp;rdquo;</textarea>
+			<div class="footnote">Copyright 2014 by <a href="http://www.pigandcow.com">Pig and Cow Design</a></div>	
+		</div>
+	</form>
+</body>
+</html>
