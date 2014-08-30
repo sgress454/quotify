@@ -1,6 +1,6 @@
 {
   "name": "quotify",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Have a text file filled with straight quotes that should be curly?  Run your text through Quotify to automatically prettify those quotes with their correct HTML entity equivalents!",
   "main": "index.js",
   "scripts": {
